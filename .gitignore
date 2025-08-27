@@ -1,0 +1,9 @@
+.git
+__pycache__/
+*.pyc
+cockpit/.env
+venv/
+.idea/
+.vscode/
+cockpit/migration_logs.txt
+docker-env

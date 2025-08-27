@@ -1,0 +1,26 @@
+# environment settings
+DEBUG=True
+WSGI_TIMEOUT=30
+
+# django secret key
+DJANGO_SECRET_KEY=
+
+# user verification
+ENABLE_USER_VERIFICATION=True
+EMAIL_CODE_LENGTH=6
+
+# Auth
+LOGIN_REDIRECT_URL=/
+LOGIN_URL=/users/login/
+LOGOUT_REDIRECT_URL =/
+
+# Postgres Settings
+POSTGRES_DB=postgres
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+# Postgres db container name
+POSTGRES_HOST=cockpit-app-postgres
+POSTGRES_PORT=5432
+
+# localhost urls
+CORS_ALLOWED_ORIGINS=http://localhost:8000,http://127.0.0.1:8001

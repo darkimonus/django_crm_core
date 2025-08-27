@@ -1,0 +1,52 @@
+services:
+  cockpit-app-postgres:
+    image: postgres:14.2
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - cockpit-app-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10M"
+        max-file: "5"
+
+  cockpit-app-wsgi:
+    restart: unless-stopped
+    container_name: cockpit-app-wsgi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./cockpit:/app
+    env_file:
+      - cockpit/.env
+    environment:
+      - CONTAINER_TYPE=master
+    depends_on:
+      - cockpit-app-postgres
+    networks:
+      - cockpit-app-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10M"
+        max-file: "5"
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  cockpit-app-net:
