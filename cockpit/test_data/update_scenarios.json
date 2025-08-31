@@ -1,0 +1,79 @@
+[
+  {
+    "type": "entity",
+    "entity_uuid": "990e8400-e29b-41d4-a716-446655440001",
+    "type_code": "PERSON",
+    "display_name": "Original Name",
+    "change_ts": "2025-01-19T09:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "update_test_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "990e8400-e29b-41d4-a716-446655440001",
+    "detail_code": "EMAIL",
+    "value_kind": "TEXT",
+    "value": "original@example.com",
+    "change_ts": "2025-01-19T09:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "update_test_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "990e8400-e29b-41d4-a716-446655440001",
+    "detail_code": "SALARY",
+    "value_kind": "NUM",
+    "value": 50000,
+    "change_ts": "2025-01-19T09:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "update_test_001"
+  },
+  {
+    "type": "entity",
+    "entity_uuid": "990e8400-e29b-41d4-a716-446655440001",
+    "type_code": "PERSON",
+    "display_name": "Updated Name",
+    "change_ts": "2025-01-19T14:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "update_test_002"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "990e8400-e29b-41d4-a716-446655440001",
+    "detail_code": "EMAIL",
+    "value_kind": "TEXT",
+    "value": "updated@example.com",
+    "change_ts": "2025-01-19T14:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "update_test_002"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "990e8400-e29b-41d4-a716-446655440001",
+    "detail_code": "SALARY",
+    "value_kind": "NUM",
+    "value": 55000,
+    "change_ts": "2025-01-19T14:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "update_test_002"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "990e8400-e29b-41d4-a716-446655440001",
+    "detail_code": "DEPARTMENT",
+    "value_kind": "TEXT",
+    "value": "Engineering",
+    "change_ts": "2025-01-19T14:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "update_test_002"
+  },
+  {
+    "type": "entity",
+    "entity_uuid": "990e8400-e29b-41d4-a716-446655440001",
+    "type_code": "PERSON",
+    "display_name": "Updated Name",
+    "change_ts": "2025-01-19T14:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "update_test_003"
+  }
+]

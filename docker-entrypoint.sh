@@ -6,5 +6,5 @@ if [ "$CONTAINER_TYPE" = "master" ]; then
     echo "collected static"
     python manage.py migrate | tee migration_logs.txt
     echo "migrated"
-    gunicorn --bind 0.0.0.0:8000 config.wsgi:application
+    gunicorn --bind 0.0.0.0:8000 --reload config.wsgi:application
 fi

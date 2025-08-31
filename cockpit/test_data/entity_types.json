@@ -1,0 +1,6 @@
+[
+  {"code": "PERSON", "title": "Person"},
+  {"code": "COMPANY", "title": "Company"},
+  {"code": "TRUST", "title": "Trust"},
+  {"code": "FUND", "title": "Fund"}
+]

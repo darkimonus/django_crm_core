@@ -1,0 +1,86 @@
+[
+  {
+    "type": "detail",
+    "entity_uuid": "550e8400-e29b-41d4-a716-446655440001",
+    "detail_code": "EMAIL",
+    "value_kind": "TEXT",
+    "value": "john.doe@example.com",
+    "change_ts": "2025-01-15T10:30:00Z",
+    "actor": "etl@example.com",
+    "correlation_id": "batch_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "550e8400-e29b-41d4-a716-446655440001",
+    "detail_code": "PHONE",
+    "value_kind": "TEXT",
+    "value": "+1-555-123-4567",
+    "change_ts": "2025-01-15T10:30:00Z",
+    "actor": "etl@example.com",
+    "correlation_id": "batch_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "550e8400-e29b-41d4-a716-446655440002",
+    "detail_code": "WEBSITE",
+    "value_kind": "TEXT",
+    "value": "https://acme.com",
+    "change_ts": "2025-01-15T10:30:00Z",
+    "actor": "etl@example.com",
+    "correlation_id": "batch_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "550e8400-e29b-41d4-a716-446655440002",
+    "detail_code": "EMPLOYEE_COUNT",
+    "value_kind": "NUM",
+    "value": 150,
+    "change_ts": "2025-01-15T10:30:00Z",
+    "actor": "etl@example.com",
+    "correlation_id": "batch_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "550e8400-e29b-41d4-a716-446655440003",
+    "detail_code": "EMAIL",
+    "value_kind": "TEXT",
+    "value": "jane.smith@example.com",
+    "change_ts": "2025-01-15T10:30:00Z",
+    "actor": "etl@example.com",
+    "correlation_id": "batch_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "550e8400-e29b-41d4-a716-446655440003",
+    "detail_code": "BIRTH_DATE",
+    "value_kind": "TS",
+    "value": "1990-05-15T00:00:00Z",
+    "change_ts": "2025-01-15T10:30:00Z",
+    "actor": "etl@example.com",
+    "correlation_id": "batch_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "550e8400-e29b-41d4-a716-446655440003",
+    "detail_code": "IS_ACTIVE",
+    "value_kind": "BOOL",
+    "value": true,
+    "change_ts": "2025-01-15T10:30:00Z",
+    "actor": "etl@example.com",
+    "correlation_id": "batch_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "550e8400-e29b-41d4-a716-446655440003",
+    "detail_code": "PREFERENCES",
+    "value_kind": "JSON",
+    "value": {
+      "theme": "dark",
+      "notifications": true,
+      "language": "en"
+    },
+    "change_ts": "2025-01-15T10:30:00Z",
+    "actor": "etl@example.com",
+    "correlation_id": "batch_001"
+  }
+]

@@ -1,0 +1,75 @@
+[
+  {
+    "type": "entity",
+    "entity_uuid": "660e8400-e29b-41d4-a716-446655440001",
+    "type_code": "PERSON",
+    "display_name": "Alice Cooper",
+    "change_ts": "2025-01-16T09:15:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "test_combined_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "660e8400-e29b-41d4-a716-446655440001",
+    "detail_code": "EMAIL",
+    "value_kind": "TEXT",
+    "value": "alice.cooper@example.com",
+    "change_ts": "2025-01-16T09:15:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "test_combined_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "660e8400-e29b-41d4-a716-446655440001",
+    "detail_code": "ROLE",
+    "value_kind": "TEXT",
+    "value": "Senior Developer",
+    "change_ts": "2025-01-16T09:15:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "test_combined_001"
+  },
+  {
+    "type": "entity",
+    "entity_uuid": "660e8400-e29b-41d4-a716-446655440002",
+    "type_code": "COMPANY",
+    "display_name": "Innovation Labs",
+    "change_ts": "2025-01-16T09:15:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "test_combined_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "660e8400-e29b-41d4-a716-446655440002",
+    "detail_code": "WEBSITE",
+    "value_kind": "TEXT",
+    "value": "https://innovationlabs.com",
+    "change_ts": "2025-01-16T09:15:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "test_combined_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "660e8400-e29b-41d4-a716-446655440002",
+    "detail_code": "REVENUE",
+    "value_kind": "NUM",
+    "value": 2500000.75,
+    "change_ts": "2025-01-16T09:15:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "test_combined_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "660e8400-e29b-41d4-a716-446655440002",
+    "detail_code": "METRICS",
+    "value_kind": "JSON",
+    "value": {
+      "customers": 1250,
+      "growth_rate": 0.15,
+      "churn_rate": 0.05,
+      "features": ["AI", "ML", "Analytics"]
+    },
+    "change_ts": "2025-01-16T09:15:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "test_combined_001"
+  }
+]

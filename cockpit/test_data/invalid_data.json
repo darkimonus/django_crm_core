@@ -1,0 +1,45 @@
+[
+  {
+    "type": "entity",
+    "entity_uuid": "880e8400-e29b-41d4-a716-446655440001",
+    "type_code": "INVALID_TYPE",
+    "display_name": "Invalid Entity",
+    "change_ts": "2025-01-18T10:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "invalid_test_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "880e8400-e29b-41d4-a716-446655440001",
+    "detail_code": "EMAIL",
+    "value_kind": "INVALID_KIND",
+    "value": "test@example.com",
+    "change_ts": "2025-01-18T10:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "invalid_test_001"
+  },
+  {
+    "type": "entity",
+    "entity_uuid": "880e8400-e29b-41d4-a716-446655440002",
+    "display_name": "Missing Type Code",
+    "change_ts": "2025-01-18T10:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "invalid_test_001"
+  },
+  {
+    "type": "detail",
+    "entity_uuid": "880e8400-e29b-41d4-a716-446655440003",
+    "detail_code": "EMAIL",
+    "value_kind": "TEXT",
+    "change_ts": "invalid_timestamp",
+    "actor": "etl@test.com",
+    "correlation_id": "invalid_test_001"
+  },
+  {
+    "type": "unknown_type",
+    "entity_uuid": "880e8400-e29b-41d4-a716-446655440004",
+    "change_ts": "2025-01-18T10:00:00Z",
+    "actor": "etl@test.com",
+    "correlation_id": "invalid_test_001"
+  }
+]

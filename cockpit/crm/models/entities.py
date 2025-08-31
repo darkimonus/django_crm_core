@@ -127,7 +127,7 @@ class Entity(SCD2Mixin):
     class Meta:
         db_table = "entity"
         constraints = [
-            # Only one "current" record per entity_uid
+            # Only one "current" record per entity_uuid
             models.UniqueConstraint(
                 fields=["entity_uuid"], condition=Q(is_current=True), name="uniq_entity_current"
             ),
