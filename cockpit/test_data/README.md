@@ -1,227 +1,98 @@
-# Test Data for Management Commands
+# Test Data
 
-This directory contains various test data files for testing the `batch_ingest` and `snapshot_refresh` management commands.
+This directory contains curated datasets used to exercise the CRM core with realistic inputs across value kinds, SCD2 transitions, error scenarios, and performance. For how to run management commands with these files, see MANAGEMENT_COMMANDS.md.
 
 ## File Overview
 
-### 📁 **Basic Test Files**
+### 📁 Basic Test Files
 
-#### `sample_entities.json`
-- **Purpose**: Basic entity testing
-- **Content**: 5 entities (3 PERSON, 2 COMPANY)
-- **Records**: 5
-- **Use Case**: Testing basic entity ingestion
+#### sample_entities.json
+- Purpose: Basic entity testing
+- Content: 5 entities (3 PERSON, 2 COMPANY)
+- Records: 5
+- Notes: Focused on entity create path.
 
-#### `sample_details.json`
-- **Purpose**: Basic detail testing with all value types
-- **Content**: 15 details covering all value kinds (TEXT, NUM, TS, BOOL, JSON)
-- **Records**: 15
-- **Use Case**: Testing detail ingestion with various data types
+#### sample_details.json
+- Purpose: Basic detail testing with all value types
+- Content: 15 details covering TEXT, NUM, TS, BOOL, JSON
+- Records: 15
+- Notes: Attaches to a single entity for easier inspection.
 
-### 📁 **Advanced Test Files**
+### 📁 Advanced Test Files
 
-#### `combined_data.json`
-- **Purpose**: Mixed entity and detail data
-- **Content**: 2 entities + 5 details in single file
-- **Records**: 7
-- **Use Case**: Testing mixed data ingestion in one file
+#### combined_data.json
+- Purpose: Mixed entities and details
+- Content: 2 entities + 5 details
+- Records: 7
+- Notes: Validates mixed ingestion flows in one run.
 
-#### `large_dataset.jsonl`
-- **Purpose**: Performance and batch processing testing
-- **Content**: 10 entities + 20 details in JSONL format
-- **Records**: 30
-- **Use Case**: Testing batch processing, performance, and JSONL format
+#### large_dataset.jsonl
+- Purpose: Performance and batch processing
+- Content: 10 entities + 20 details (JSONL)
+- Records: 30
+- Notes: Streaming-friendly; suited for batch-size and throughput checks.
 
-### 📁 **Error Testing Files**
+### 📁 Error Testing Files
 
-#### `invalid_data.json`
-- **Purpose**: Error handling testing
-- **Content**: Various invalid records
-- **Records**: 5 (all invalid)
-- **Use Case**: Testing error handling and validation
+#### invalid_data.json
+- Purpose: Negative scenarios and validation
+- Content: 5 intentionally invalid records
+- Notes: Unknown types, invalid kinds, missing fields, bad timestamps.
 
-#### `update_scenarios.json`
-- **Purpose**: SCD2 update behavior testing
-- **Content**: Same entity with updates over time
-- **Records**: 8
-- **Use Case**: Testing SCD2 versioning and updates
+#### update_scenarios.json
+- Purpose: SCD2 update behavior
+- Content: Updates over time for the same entity + details
+- Records: 8
+- Notes: Demonstrates version open/close and idempotency.
 
-## Usage Examples
+## How to Use These Files
 
-### Basic Testing
-
-```bash
-# Test basic entity ingestion
-python manage.py batch_ingest test_data/sample_entities.json --dry-run
-
-# Test basic detail ingestion
-python manage.py batch_ingest test_data/sample_details.json --dry-run
-
-# Test combined data
-python manage.py batch_ingest test_data/combined_data.json --dry-run
-```
-
-### Performance Testing
-
-```bash
-# Test large dataset with custom batch size
-python manage.py batch_ingest test_data/large_dataset.jsonl --batch-size 5 --dry-run
-
-# Test performance with different batch sizes
-python manage.py batch_ingest test_data/large_dataset.jsonl --batch-size 10
-python manage.py batch_ingest test_data/large_dataset.jsonl --batch-size 20
-```
-
-### Error Handling Testing
-
-```bash
-# Test error handling (should fail)
-python manage.py batch_ingest test_data/invalid_data.json
-
-# Test error handling with continue on error
-python manage.py batch_ingest test_data/invalid_data.json --continue-on-error
-```
-
-### SCD2 Update Testing
-
-```bash
-# Test SCD2 updates
-python manage.py batch_ingest test_data/update_scenarios.json --dry-run
-
-# Test actual updates
-python manage.py batch_ingest test_data/update_scenarios.json
-```
-
-### Snapshot Refresh Testing
-
-```bash
-# Test snapshot refresh after data ingestion
-python manage.py snapshot_refresh --dry-run
-
-# Test selective refresh
-python manage.py snapshot_refresh --entity-types PERSON --dry-run
-
-# Test time-based refresh
-python manage.py snapshot_refresh --since "2025-01-19T00:00:00Z" --dry-run
-```
+See MANAGEMENT_COMMANDS.md for usage of `load_entity_types`, `batch_ingest`, and `snapshot_refresh`. Use file paths from this folder (e.g., `test_data/sample_entities.json`) as inputs to those commands.
 
 ## Data Types Covered
 
 ### Entity Types
-- `PERSON`: Individual people
-- `COMPANY`: Business entities
+- PERSON: Individual people
+- COMPANY: Business entities
 
 ### Detail Value Kinds
-- `TEXT`: String values (emails, names, etc.)
-- `NUM`: Numeric values (ages, salaries, counts)
-- `TS`: Timestamp values (dates, times)
-- `BOOL`: Boolean values (true/false flags)
-- `JSON`: Complex structured data
+- TEXT: String values (emails, names, etc.)
+- NUM: Numeric values (ages, salaries, counts)
+- TS: Timestamp values (dates, times)
+- BOOL: Boolean values (true/false flags)
+- JSON: Structured data
 
-### Detail Codes
-- `EMAIL`: Contact email addresses
-- `PHONE`: Phone numbers
-- `WEBSITE`: Company websites
-- `AGE`: Person ages
-- `SALARY`: Employee salaries
-- `EMPLOYEE_COUNT`: Company employee counts
-- `BIRTH_DATE`: Person birth dates
-- `FOUNDED_DATE`: Company founding dates
-- `IS_ACTIVE`: Active status flags
-- `IS_PUBLIC`: Public company flags
-- `DEPARTMENT`: Employee departments
-- `ROLE`: Job roles
-- `INDUSTRY`: Company industries
-- `SECTOR`: Business sectors
-- `MARKET_CAP`: Company market capitalization
-- `SCORE`: Performance scores
-- `REVENUE`: Company revenue
-- `PREFERENCES`: User preferences (JSON)
-- `FUNDING_ROUNDS`: Company funding data (JSON)
-- `METRICS`: Business metrics (JSON)
+### Common Detail Codes
+- EMAIL, PHONE, WEBSITE, AGE, SALARY, EMPLOYEE_COUNT
+- BIRTH_DATE, FOUNDED_DATE, IS_ACTIVE, IS_PUBLIC
+- DEPARTMENT, ROLE, INDUSTRY, SECTOR, MARKET_CAP
+- SCORE, REVENUE, PREFERENCES (JSON), FUNDING_ROUNDS (JSON), METRICS (JSON)
 
-## Test Scenarios
+## Test Scenarios Covered by Files
 
-### 1. **Basic Functionality**
-- ✅ Entity creation
-- ✅ Detail creation
-- ✅ All value types
-- ✅ Mixed data in single file
+1) Basic functionality: entity/detail creation across all value kinds, mixed single-file loads.
+2) Performance: JSONL, larger volumes, suitability for varying batch sizes.
+3) Error handling: invalid records and partial progress behavior.
+4) SCD2: initial creation, updates, idempotency, version history.
+5) Audit trail: actor, correlation_id, timestamped changes.
 
-### 2. **Performance Testing**
-- ✅ Large dataset processing
-- ✅ JSONL format
-- ✅ Different batch sizes
-- ✅ Memory efficiency
+## Correlation IDs in Files
 
-### 3. **Error Handling**
-- ✅ Invalid entity types
-- ✅ Invalid value kinds
-- ✅ Missing required fields
-- ✅ Invalid timestamps
-- ✅ Unknown record types
+- test_batch_001: Basic sample data
+- test_combined_001: Combined data
+- large_batch_001: Large dataset
+- invalid_test_001: Invalid data
+- update_test_001/002/003: Update scenarios over time
 
-### 4. **SCD2 Behavior**
-- ✅ Initial entity creation
-- ✅ Entity updates
-- ✅ Detail updates
-- ✅ Idempotent operations
-- ✅ Version history
+## Expected Behaviors When Ingested
 
-### 5. **Audit Trail**
-- ✅ Actor tracking
-- ✅ Correlation ID tracking
-- ✅ Timestamp handling
-- ✅ Change history
+- Successful runs: entities/details created or updated; audit trail records before/after; ingest statistics reported.
+- Error runs: invalid records rejected; errors logged; totals include error counts (behavior depends on continue-on-error).
+- SCD2 updates: new versions opened, current versions closed; hashdiff changes tracked.
 
-## File Formats
+## Tips for Working With These Datasets
 
-### JSON Format
-- Standard JSON array of objects
-- Good for smaller datasets
-- Easy to read and edit
-
-### JSONL Format
-- One JSON object per line
-- Better for large datasets
-- Memory efficient
-- Streaming friendly
-
-## Correlation IDs
-
-Each test file uses specific correlation IDs for tracking:
-- `test_batch_001`: Basic sample data
-- `test_combined_001`: Combined data
-- `large_batch_001`: Large dataset
-- `invalid_test_001`: Invalid data
-- `update_test_001/002/003`: Update scenarios
-
-## Expected Results
-
-### Successful Ingestion
-- Entities created/updated
-- Details created/updated
-- Audit trail recorded
-- Statistics reported
-
-### Error Scenarios
-- Invalid data rejected
-- Error messages logged
-- Processing continues (with `--continue-on-error`)
-- Statistics include error counts
-
-### SCD2 Updates
-- New versions created
-- Old versions closed
-- Hashdiff changes tracked
-- Audit trail maintained
-
-## Tips for Testing
-
-1. **Always use `--dry-run` first** to validate data
-2. **Start with small files** before testing large datasets
-3. **Monitor database performance** during large imports
-4. **Check audit logs** for detailed change tracking
-5. **Use correlation IDs** to track specific test runs
-6. **Test error scenarios** to ensure robust error handling
-7. **Verify SCD2 behavior** with update scenarios
+1) Start with sample_* files before moving to large_dataset.jsonl.
+2) Use correlation IDs to trace and debug specific runs.
+3) Validate SCD2 transitions using update_scenarios.json.
+4) Use invalid_data.json to exercise error paths and logging.
