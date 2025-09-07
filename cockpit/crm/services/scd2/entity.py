@@ -11,6 +11,9 @@ from .types import Result
 
 
 def _entity_hash_components(*, type_code: str, display_name: str) -> str:
+    """
+    Build a stable hash from normalized business fields for idempotency.
+    """
     return calc_hashdiff(
         normalize_value("TEXT", type_code),
         normalize_value("TEXT", display_name),
@@ -27,6 +30,13 @@ def upsert_entity(
     actor: str = "etl@loader",
     correlation_id: Optional[str] = None,
 ) -> Result:
+    """
+    SCD2 upsert for Entity.
+
+    Creates the first version when absent; otherwise compares the hashdiff and
+    either no-ops or closes the current row and opens a new one at `change_ts`.
+    Writes an audit event for created/updated transitions.
+    """
     ts = parse_change_ts(change_ts)
 
     et = EntityType.objects.filter(code=type_code).only("code").first()
@@ -103,6 +113,9 @@ def upsert_entity(
 
 
 def _entity_public_dict(e: Entity) -> Dict[str, Any]:
+    """
+    Serialize Entity to an audit/public-facing dict (no model internals).
+    """
     return {
         "entity_uuid": str(e.entity_uuid),
         "type_code": getattr(e.type_code, "code", e.type_code_id),

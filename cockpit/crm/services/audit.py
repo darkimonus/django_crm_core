@@ -14,8 +14,11 @@ def write_audit(
     after: Optional[Mapping[str, Any]],
     correlation_id: Optional[str] = None,
 ) -> None:
-    """
-    Business audit record (before/after). Call inside update transaction.
+    """Persist a business audit event.
+
+    Records who did what and when at the domain level, storing a target
+    identifier with "before" and "after" payloads. Intended to be called
+    inside the same transaction as the state-changing operation.
     """
     # no heavy validation here — this is a convenient call layer
     AuditEvent.objects.create(
@@ -31,11 +34,11 @@ def write_audit(
 
 
 def unified_value(d: Optional[Mapping[str, Any]]) -> Any:
-    """Return a unified Python value from an audit value payload.
+    """Extract a typed value from an audit payload into a single Python value.
 
-    The payload is expected to be a mapping that may contain
-    `value_kind` and one of `value_text`, `value_num`, `value_ts`,
-    `value_bool`, or `value_json`.
+    Accepts a mapping with a `value_kind` discriminator and returns the
+    corresponding `value_*` field (TEXT/NUM/TS/BOOL/JSON). Returns None for
+    empty payloads and the original mapping for unknown kinds.
     """
     if not d:
         return None

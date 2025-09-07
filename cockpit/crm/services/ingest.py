@@ -4,16 +4,11 @@ from .scd2 import upsert_entity, upsert_entity_detail, Result
 
 
 def ingest_entity(payload: Mapping[str, Any]) -> Result:
-    """
-    Expected payload:
-    {
-      "entity_uuid": "uuid",
-      "type_code": "PERSON",
-      "display_name": "Acme Ltd",
-      "change_ts": "2025-08-01T12:00:00Z",
-      "actor": "etl@loader",               # optional
-      "correlation_id": "file:batch1.csv"  # optional
-    }
+    """Validate and upsert an Entity from a generic payload.
+
+    Expects keys: `entity_uuid`, `type_code`, `display_name`, `change_ts`.
+    Optional: `actor`, `correlation_id`. Delegates to SCD2 upsert and returns
+    a `Result` with the instance and status (created/updated/noop).
     """
     return upsert_entity(
         entity_uuid=payload["entity_uuid"],
@@ -26,17 +21,11 @@ def ingest_entity(payload: Mapping[str, Any]) -> Result:
 
 
 def ingest_detail(payload: Mapping[str, Any]) -> Result:
-    """
-    Expected payload:
-    {
-      "entity_uuid": "uuid",
-      "detail_code": "EMAIL",
-      "value_kind": "TEXT|NUM|TS|BOOL|JSON",
-      "value": "... or JSON object ...",
-      "change_ts": "2025-08-01T12:00:00Z",
-      "actor": "etl@loader",               # optional
-      "correlation_id": "file:batch1.csv"  # optional
-    }
+    """Validate and upsert an EntityDetail from a generic payload.
+
+    Expects keys: `entity_uuid`, `detail_code`, `value_kind`, `change_ts`.
+    Optional: `value`, `actor`, `correlation_id`. Delegates to SCD2 upsert
+    and returns a `Result` with the instance and status.
     """
     return upsert_entity_detail(
         entity_uuid=payload["entity_uuid"],

@@ -11,6 +11,9 @@ from .types import Result
 
 
 def _detail_hash_components(*, kind: str, value: Any) -> str:
+    """
+    Build a stable hash from normalized detail value for idempotency.
+    """
     return calc_hashdiff(normalize_value(kind, value))
 
 
@@ -25,6 +28,13 @@ def upsert_entity_detail(
     actor: str = "etl@loader",
     correlation_id: Optional[str] = None,
 ) -> Result:
+    """
+    SCD2 upsert for EntityDetail keyed by (entity_uuid, detail_code).
+
+    Creates the first current row if absent; otherwise compares hashdiff and
+    either no-ops or closes the current row and opens a new one at `change_ts`.
+    Writes an audit event for created/updated transitions.
+    """
     ts = parse_change_ts(change_ts)
     kind = (value_kind or "").upper()
     new_hash = _detail_hash_components(kind=kind, value=value)
@@ -101,6 +111,9 @@ def upsert_entity_detail(
 
 
 def _detail_field_payload(kind: str, value: Any) -> Dict[str, Any]:
+    """
+    Map a value_kind to the appropriate value_* column payload.
+    """
     fields = {
         "value_text": None,
         "value_num": None,
@@ -125,6 +138,9 @@ def _detail_field_payload(kind: str, value: Any) -> Dict[str, Any]:
 
 
 def _detail_public_dict(d: EntityDetail) -> Dict[str, Any]:
+    """
+    Serialize EntityDetail to an audit/public-facing dict.
+    """
     base = {
         "entity_uuid": str(d.entity_uuid),
         "detail_code": d.detail_code,
