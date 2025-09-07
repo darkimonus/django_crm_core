@@ -52,6 +52,11 @@ snapshot-refresh:
 snapshot-refresh-dry-run:
 	$(dc) exec cockpit-app-wsgi python manage.py snapshot_refresh --dry-run $(args);
 
+# Entity types loader
+.PHONY: load-entity-types
+load-entity-types:
+	$(dc) exec cockpit-app-wsgi python manage.py load_entity_types $(file) $(args);
+
 # Test Data Commands
 .PHONY: test-entities
 test-entities:
@@ -85,11 +90,32 @@ test-snapshot:
 logs:
 	$(dc) logs -f cockpit-app-wsgi;
 
+# Linting
+.PHONY: lint lint-flake8 lint-bandit
+lint: lint-flake8 lint-bandit
+
+lint-flake8:
+	$(dc) exec cockpit-app-wsgi sh -lc "flake8 ."
+
+lint-bandit:
+	$(dc) exec cockpit-app-wsgi sh -lc "bandit -c bandit.yaml -r ."
 # Test Commands
-.PHONY: test
+.PHONY: test test-all test-services test-api test-models
 # Run all pytest tests in cockpit/crm (unit, API, idempotency, negative)
-test:
-	$(dc) exec cockpit-app-wsgi pytest crm -- --ds=cockpit.config.settings_test
+test test-all:
+	$(dc) exec cockpit-app-wsgi pytest crm --ds=config.settings_test -q
+
+# Run only service-layer tests
+test-services:
+	$(dc) exec cockpit-app-wsgi pytest crm/tests/services --ds=config.settings_test -q
+
+# Run only API tests
+test-api:
+	$(dc) exec cockpit-app-wsgi pytest crm/tests/api --ds=config.settings_test -q
+
+# Run only model constraint/negative tests
+test-models:
+	$(dc) exec cockpit-app-wsgi pytest crm/tests/models --ds=config.settings_test -q
 
 # Help command
 .PHONY: help
@@ -109,18 +135,14 @@ help:
 	@echo "  make batch-ingest-dry-run file='data.json' - Run batch ingest (dry run)"
 	@echo "  make snapshot-refresh                     - Run snapshot refresh"
 	@echo "  make snapshot-refresh-dry-run             - Run snapshot refresh (dry run)"
+	@echo "  make load-entity-types file='entity_types.json' - Load/update reference entity types"
 	@echo ""
 	@echo "Test Commands:"
-	@echo "  make test-entities   - Test entity ingestion"
-	@echo "  make test-details    - Test detail ingestion"
-	@echo "  make test-combined   - Test combined data"
-	@echo "  make test-large      - Test large dataset"
-	@echo "  make test-errors     - Test error handling"
-	@echo "  make test-updates    - Test SCD2 updates"
-	@echo "  make test-snapshot   - Test snapshot refresh"
-	@echo "  make test-py         - Run all pytest tests in cockpit/crm"
-	@echo "  make test            - Run pytest"
-	@echo "  make test-crm        - Run pytest for CRM tests"
+	@echo "  make test            - Run all tests (alias: test-all)"
+	@echo "  make test-all        - Run all tests in crm"
+	@echo "  make test-services   - Run service-layer tests"
+	@echo "  make test-api        - Run API tests"
+	@echo "  make test-models     - Run model constraint tests"
 	@echo ""
 	@echo "Examples:"
 	@echo "  make manage batch_ingest test_data/large_dataset.jsonl -- --batch-size 5 --dry-run"
@@ -129,3 +151,8 @@ help:
 	@echo "  make batch-ingest file='test_data/sample_entities.json'"
 	@echo "  make batch-ingest file='test_data/large_dataset.jsonl' args='--batch-size 10'"
 	@echo "  make snapshot-refresh args='--entity-types PERSON --since 2025-01-01T00:00:00Z'"
+	@echo ""
+	@echo "Linting:"
+	@echo "  make lint            - Run flake8 and bandit"
+	@echo "  make lint-flake8     - Run flake8 (PEP8/quality)"
+	@echo "  make lint-bandit     - Run bandit (security checks)"

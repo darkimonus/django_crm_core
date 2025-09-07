@@ -5,8 +5,10 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from crm.api.views.auth import (
+    TokenObtainPairViewDoc as TokenObtainPairView,
+    TokenRefreshViewDoc as TokenRefreshView,
+    TokenVerifyViewDoc as TokenVerifyView,
 )
 
 urlpatterns = [

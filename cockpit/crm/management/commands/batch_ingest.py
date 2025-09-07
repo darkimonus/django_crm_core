@@ -96,7 +96,7 @@ class Command(BaseCommand):
             batch_stats = self._process_batch(
                 batch, actor, correlation_id, dry_run, continue_on_error
             )
-            
+
             # Update overall stats
             for key in stats:
                 if key in batch_stats:
@@ -114,7 +114,7 @@ class Command(BaseCommand):
                     batch_stats['details_updated'] +
                     batch_stats['details_noop']
             )
-            
+
             self.stdout.write(
                 f"Processed batch {batch_num}/{total_batches}: "
                 f"{entity_count} entities, {detail_count} details, "
@@ -142,13 +142,15 @@ class Command(BaseCommand):
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            
+
             if isinstance(data, list):
                 return data
             elif isinstance(data, dict) and "records" in data:
                 return data["records"]
             else:
-                raise CommandError("JSON file must contain an array of records or a dict with 'records' key")
+                raise CommandError(
+                    "JSON file must contain an array of records or a dict with 'records' key"
+                )
         except json.JSONDecodeError as e:
             raise CommandError(f"Invalid JSON in file: {e}")
 
@@ -168,14 +170,14 @@ class Command(BaseCommand):
                         raise CommandError(f"Invalid JSON on line {line_num}: {e}")
         except Exception as e:
             raise CommandError(f"Error reading JSONL file: {e}")
-        
+
         return records
 
     def _process_batch(
-        self, 
-        batch: List[Dict[str, Any]], 
-        actor: str, 
-        correlation_id: str, 
+        self,
+        batch: List[Dict[str, Any]],
+        actor: str,
+        correlation_id: str,
         dry_run: bool,
         continue_on_error: bool
     ) -> Dict[str, int]:
@@ -257,21 +259,21 @@ class Command(BaseCommand):
             raise ValueError(f"Missing required fields: {missing_fields}")
 
     def _process_record(
-        self, 
-        record: Dict[str, Any], 
-        actor: str, 
+        self,
+        record: Dict[str, Any],
+        actor: str,
         correlation_id: str
     ) -> Dict[str, Any]:
         """Process a single record"""
         self._validate_record(record)
-        
+
         record_type = record["type"]
-        
+
         # Add actor and correlation_id to payload
         payload = record.copy()
         payload["actor"] = actor
         payload["correlation_id"] = correlation_id
-        
+
         if record_type == "entity":
             result = ingest_entity(payload)
             return {
@@ -282,7 +284,7 @@ class Command(BaseCommand):
         else:  # detail
             result = ingest_detail(payload)
             return {
-                "type": "detail", 
+                "type": "detail",
                 "status": result.status,
                 "entity_uuid": str(result.instance.entity_uuid),
                 "detail_code": result.instance.detail_code

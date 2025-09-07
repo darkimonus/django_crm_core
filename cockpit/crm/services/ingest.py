@@ -1,7 +1,6 @@
-from typing import Mapping, Any, Optional
+from typing import Mapping, Any
 
 from .scd2 import upsert_entity, upsert_entity_detail, Result
-from utils import parse_change_ts
 
 
 def ingest_entity(payload: Mapping[str, Any]) -> Result:

@@ -18,11 +18,11 @@ class SCD2Mixin(models.Model):
         constraints = [
             CheckConstraint(
                 name="scd2_valid_bounds_chk",
-                check=Q(valid_from__lt=F("valid_to")) | Q(valid_to__isnull=True),
+                condition=Q(valid_from__lt=F("valid_to")) | Q(valid_to__isnull=True),
             ),
             CheckConstraint(
                 name="scd2_current_to_null_chk",
-                check=(Q(is_current=True, valid_to__isnull=True) |
-                       Q(is_current=False, valid_to__isnull=False)),
+                condition=(Q(is_current=True, valid_to__isnull=True) |
+                           Q(is_current=False, valid_to__isnull=False)),
             ),
         ]

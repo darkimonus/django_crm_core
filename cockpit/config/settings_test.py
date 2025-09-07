@@ -1,14 +1,13 @@
+import os
 from .settings import *  # noqa
 
-# Use SQLite for tests (fast, zero-setup)
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": ":memory:",  # or BASE_DIR / "test.sqlite3"
-    }
-}
+# Use Postgres in tests to support exclusion constraints and ranges
+# Ensure we DO NOT mirror the default DB; run full migrations for tests.
+test_db_name = os.getenv("POSTGRES_TEST_DB", f"test_{os.getenv('POSTGRES_DB', 'postgres')}")
+DATABASES["default"].pop("TEST", None)
+DATABASES["default"]["TEST"] = {"NAME": test_db_name}
 
-SECRET_KEY = "test-secret-key"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "test-secret-key")
 DEBUG = False
 
 # Faster password hashing for tests

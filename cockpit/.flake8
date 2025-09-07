@@ -1,0 +1,15 @@
+[flake8]
+max-line-length = 120
+extend-ignore = E203,W503
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    migrations,
+    */migrations/*,
+    config/settings_test.py
+    tests,
+    crm/tests,
+per-file-ignores =
+    # Allow module-level imports ordering and higher line length in generated migrations
+    */migrations/*.py: E402,E501

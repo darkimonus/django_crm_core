@@ -180,7 +180,7 @@ SPECTACULAR_SETTINGS.update({
         "tryItOutEnabled": True,
         "defaultModelsExpandDepth": -1,
         "defaultModelExpandDepth": 2,
+        # Enable search/filter; Swagger UI filter is case-insensitive
         "filter": True,
     },
 })
-

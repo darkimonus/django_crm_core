@@ -1,74 +1,57 @@
-# django_crm_core
+django_crm_core
 
-## Architecture Overview
+Short description
 
-This project is a Django-based CRM core system designed with modularity and scalability in mind. The architecture consists of several key components:
+A Django-based CRM core implementing in-table SCD Type 2 versioning for Entities and Entity Details. Includes clean DRF APIs, idempotent ingestion services, and audit logging. Designed to be modular and extensible.
 
-- **cockpit/**: Contains the main Django project configuration and management scripts.
-- **crm/**: The core CRM application, including models, views, APIs, services, and management commands.
-- **test_data/**: Sample and test data files used for testing and development.
+Getting started (Makefile)
 
-The system uses Django's ORM for data modeling and includes services for business logic, audit trails, and data ingestion.
-
-## Quick Setup
-
-To quickly set up the development environment and run the project, use the provided `Makefile`:
-
+1) Build and start containers
 ```bash
 make build
 make up
 ```
 
-## Management Commands
-
-For advanced operations and batch processing, refer to the `MANAGEMENT_COMMANDS.md` file. It contains detailed instructions on available management commands and how to use them.
-
-## Example CURL Sequences
-
-Below are example CURL commands to interact with the API endpoints:
-
-### Example 1: Get list of entities
+2) Load reference data and sample records (optional for demos)
 ```bash
-curl -X GET http://localhost:8000/api/entities/ -H "Accept: application/json"
+make load-entity-types file='test_data/entity_types.json'
+make batch-ingest file='test_data/sample_entities.json'
+make batch-ingest file='test_data/sample_details.json'
 ```
 
-### Example 2: Create a new entity
+3) Open API docs
 ```bash
-curl -X POST http://localhost:8000/api/entities/ \
-  -H "Content-Type: application/json" \
-  -d '{"name": "New Entity", "type": "customer"}'
+http://localhost:8000/api/v1/schema/swagger-ui/
 ```
 
-### Example 3: Update an entity
+Linting
+
+- Run both linters (after a `make build` to install tools):
 ```bash
-curl -X PUT http://localhost:8000/api/entities/1/ \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Updated Entity"}'
+make lint
 ```
 
-### Example 4: Delete an entity
+- Run flake8 only (PEP8/quality):
 ```bash
-curl -X DELETE http://localhost:8000/api/entities/1/
+make lint-flake8
 ```
 
-Replace `http://localhost:8000` with your actual server address and port if needed.
-
-## Security
-
-To test the API endpoints, you need to create a superuser account. You can do this using the management command:
-
+- Run bandit only (security checks):
 ```bash
-make manage createsuperuser
+make lint-bandit
 ```
 
-After creating the superuser, obtain a JWT access token by authenticating at the endpoint:
+Project docs map
 
-```
-POST /api/auth/token/
-```
+- ARCHITECTURE_OVERVIEW.md: Core architecture and SCD2 data model overview.
+- API_REQUESTS.md: Ready-to-run cURL commands to exercise the API.
+- MANAGEMENT_COMMANDS.md: How to use `load_entity_types`, `batch_ingest`, and `snapshot_refresh` (with `--dry-run`).
+- TESTS_README.md: How to run the test suite (all/services/api/models) via Makefile.
+- Advanced_Cockpit_CRM_SCD2_Assignment.md: Original assignment and scope details.
+- PERFORMANCE.md: Indexing strategy and EXPLAIN/analysis for key queries.
+- PII_GUIDELINES.md: Data classification and handling guidance.
 
-Use this token in the Authorization header as a Bearer token to access protected endpoints.
+Notes
 
----
-
-For more detailed API documentation, please refer to the codebase or .
+- Auth: POST/PATCH endpoints require JWT (see API_REQUESTS.md for token obtain flow). GET endpoints are public (read-only).
+- Data: Use Makefile commands above to seed data quickly for exploration.

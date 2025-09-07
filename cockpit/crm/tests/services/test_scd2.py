@@ -1,58 +1,50 @@
 import pytest
-from django.utils.timezone import now, timedelta
-from crm.models.entities import Entity
+from datetime import timedelta
+from django.utils.timezone import now
+
+from crm.models import EntityType, Entity
 from crm.services.scd2 import upsert_entity
+from crm.services.exceptions import BackdatedIntervalError, TypeCodeNotFound
+
+
+@pytest.fixture(autouse=True)
+def ensure_types(db):
+    EntityType.objects.get_or_create(code="PERSON", defaults={"title": "Person"})
 
 
 @pytest.mark.django_db
-class TestSCD2Transitions:
-    def test_create_entity(self):
-        entity_data = {
-            'entity_uuid': '550e8400-e29b-41d4-a716-446655440010',
-            'type_code': 'PERSON',
-            'display_name': 'Alice',
-            'change_ts': now(),
-            'actor': 'test@example.com',
-            'correlation_id': 'test_batch'
-        }
-        result = upsert_entity(
-            entity_uuid=entity_data['entity_uuid'],
-            type_code=entity_data['type_code'],
-            display_name=entity_data['display_name'],
-            change_ts=entity_data['change_ts'],
-            actor=entity_data['actor'],
-            correlation_id=entity_data['correlation_id'],
-        )
-        assert result.instance.pk is not None
-        assert result.instance.display_name == 'Alice'
+def test_entity_create_and_noop():
+    ts = now()
+    res1 = upsert_entity(
+        entity_uuid="550e8400-e29b-41d4-a716-446655440010",
+        type_code="PERSON",
+        display_name="Alice",
+        change_ts=ts,
+        actor="test@example.com",
+    )
+    assert res1.status == "created"
+    res2 = upsert_entity(
+        entity_uuid="550e8400-e29b-41d4-a716-446655440010",
+        type_code="PERSON",
+        display_name="Alice",
+        change_ts=ts,
+        actor="test@example.com",
+    )
+    assert res2.status == "noop"
 
-    def test_update_entity(self):
-        entity = Entity.objects.create(
-            entity_uuid='550e8400-e29b-41d4-a716-446655440011',
-            type_code='PERSON',
-            display_name='Bob',
-            valid_from=now() - timedelta(days=1),
-            valid_to=None,
-            is_current=True,
-            hashdiff='',
-            actor='initial@example.com',
-            correlation_id='initial_batch'
-        )
-        update_data = {
-            'entity_uuid': '550e8400-e29b-41d4-a716-446655440011',
-            'type_code': 'PERSON',
-            'display_name': 'Bobby',
-            'change_ts': now(),
-            'actor': 'update@example.com',
-            'correlation_id': 'update_batch'
-        }
-        result = upsert_entity(
-            entity_uuid=update_data['entity_uuid'],
-            type_code=update_data['type_code'],
-            display_name=update_data['display_name'],
-            change_ts=update_data['change_ts'],
-            actor=update_data['actor'],
-            correlation_id=update_data['correlation_id'],
-        )
-        assert result.instance.display_name == 'Bobby'
-        assert result.instance.change_ts > entity.valid_from
+
+@pytest.mark.django_db
+def test_entity_update_and_backdated_error():
+    start = now()
+    eid = "550e8400-e29b-41d4-a716-446655440011"
+    upsert_entity(entity_uuid=eid, type_code="PERSON", display_name="Bob", change_ts=start)
+    res = upsert_entity(entity_uuid=eid, type_code="PERSON", display_name="Bobby", change_ts=start + timedelta(minutes=1))
+    assert res.status == "updated"
+    with pytest.raises(BackdatedIntervalError):
+        upsert_entity(entity_uuid=eid, type_code="PERSON", display_name="Bobby2", change_ts=start)
+
+
+@pytest.mark.django_db
+def test_invalid_type_code():
+    with pytest.raises(TypeCodeNotFound):
+        upsert_entity(entity_uuid="550e8400-e29b-41d4-a716-446655440099", type_code="UNKNOWN", display_name="X", change_ts=now())

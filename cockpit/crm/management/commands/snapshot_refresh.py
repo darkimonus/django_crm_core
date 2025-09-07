@@ -1,8 +1,10 @@
 import logging
 from datetime import datetime, timezone
 from typing import List, Optional
+
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
+from psycopg import sql
 
 from crm.models import Entity, EntityDetail
 
@@ -18,33 +20,33 @@ class Command(BaseCommand):
             "--entity-types",
             nargs="+",
             type=str,
-            help="Specific entity types to refresh (default: all)"
+            help="Specific entity types to refresh (default: all)",
         )
         parser.add_argument(
             "--detail-codes",
             nargs="+",
             type=str,
-            help="Specific detail codes to refresh (default: all)"
+            help="Specific detail codes to refresh (default: all)",
         )
         parser.add_argument(
             "--since",
             type=str,
-            help="Only refresh data changed since this timestamp (ISO format)"
+            help="Only refresh data changed since this timestamp (ISO format)",
         )
         parser.add_argument(
             "--dry-run",
             action="store_true",
-            help="Show what would be refreshed without making changes"
+            help="Show what would be refreshed without making changes",
         )
         parser.add_argument(
             "--force",
             action="store_true",
-            help="Force refresh even if no changes detected"
+            help="Force refresh even if no changes detected",
         )
         parser.add_argument(
             "--create-snapshot-table",
             action="store_true",
-            help="Create a new snapshot table with current timestamp"
+            help="Create a new snapshot table with current timestamp",
         )
 
     def handle(self, *args, **options):
@@ -67,7 +69,7 @@ class Command(BaseCommand):
         since_ts = None
         if since:
             try:
-                since_ts = datetime.fromisoformat(since.replace('Z', '+00:00'))
+                since_ts = datetime.fromisoformat(since.replace("Z", "+00:00"))
                 if since_ts.tzinfo is None:
                     since_ts = since_ts.replace(tzinfo=timezone.utc)
             except ValueError as e:
@@ -78,7 +80,9 @@ class Command(BaseCommand):
             changes = self._check_for_changes(since_ts, entity_types, detail_codes)
             if not changes:
                 self.stdout.write(
-                    self.style.SUCCESS("No changes detected. Use --force to refresh anyway.")
+                    self.style.SUCCESS(
+                        "No changes detected. Use --force to refresh anyway."
+                    )
                 )
                 return
 
@@ -86,20 +90,16 @@ class Command(BaseCommand):
         if create_snapshot_table:
             self._create_snapshot_table(dry_run)
 
-        self._refresh_entity_snapshots(
-            since_ts, entity_types, dry_run
-        )
-        self._refresh_detail_snapshots(
-            since_ts, detail_codes, dry_run
-        )
+        self._refresh_entity_snapshots(since_ts, entity_types, dry_run)
+        self._refresh_detail_snapshots(since_ts, detail_codes, dry_run)
 
         self.stdout.write(self.style.SUCCESS("Snapshot refresh completed successfully!"))
 
     def _check_for_changes(
-        self, 
-        since_ts: Optional[datetime], 
-        entity_types: Optional[List[str]], 
-        detail_codes: Optional[List[str]]
+        self,
+        since_ts: Optional[datetime],
+        entity_types: Optional[List[str]],
+        detail_codes: Optional[List[str]],
     ) -> bool:
         """Check if there are any changes that require refresh"""
         self.stdout.write("Checking for changes...")
@@ -139,9 +139,10 @@ class Command(BaseCommand):
 
         with connection.cursor() as cursor:
             # Create snapshot table with current entity data
-            cursor.execute(f"""
-                CREATE TABLE {table_name} AS
-                SELECT 
+            create_tbl = sql.SQL(
+                """
+                CREATE TABLE {table} AS
+                SELECT
                     e.entity_uuid,
                     et.code as type_code,
                     e.display_name,
@@ -154,23 +155,31 @@ class Command(BaseCommand):
                 FROM crm_entity e
                 JOIN crm_entitytype et ON e.type_code_id = et.id
                 WHERE e.is_current = true
-            """)
+                """
+            ).format(table=sql.Identifier(table_name))
+            cursor.execute(create_tbl)
 
             # Create index on entity_uuid for performance
-            cursor.execute(f"""
-                CREATE INDEX idx_{table_name}_entity_uuid 
-                ON {table_name} (entity_uuid)
-            """)
+            index_name = f"idx_{table_name}_entity_uuid"
+            create_idx = sql.SQL(
+                "CREATE INDEX {idx} ON {table} (entity_uuid)"
+            ).format(
+                idx=sql.Identifier(index_name),
+                table=sql.Identifier(table_name),
+            )
+            cursor.execute(create_idx)
 
         self.stdout.write(
-            self.style.SUCCESS(f"Snapshot table {table_name} created successfully")
+            self.style.SUCCESS(
+                f"Snapshot table {table_name} created successfully"
+            )
         )
 
     def _refresh_entity_snapshots(
-        self, 
-        since_ts: Optional[datetime], 
-        entity_types: Optional[List[str]], 
-        dry_run: bool
+        self,
+        since_ts: Optional[datetime],
+        entity_types: Optional[List[str]],
+        dry_run: bool,
     ) -> None:
         """Refresh entity snapshots"""
         self.stdout.write("Refreshing entity snapshots...")
@@ -188,29 +197,24 @@ class Command(BaseCommand):
             self.stdout.write("DRY RUN - Would refresh entity snapshots")
             return
 
-        # Here you would implement the actual snapshot refresh logic
-        # This could involve:
-        # 1. Updating materialized views
-        # 2. Refreshing cache
-        # 3. Updating summary tables
-        # 4. Rebuilding indexes
-
-        # For now, we'll just log the entities that would be refreshed
-        for entity in query.select_related('type_code')[:10]:  # Limit for demo
+        # For now, log sample of refreshed entities
+        for entity in query.select_related("type_code")[:10]:
             logger.info(
                 f"Refreshing entity: {entity.entity_uuid} "
                 f"({entity.type_code.code})"
             )
 
         self.stdout.write(
-            self.style.SUCCESS(f"Entity snapshots refreshed: {entity_count} entities")
+            self.style.SUCCESS(
+                f"Entity snapshots refreshed: {entity_count} entities"
+            )
         )
 
     def _refresh_detail_snapshots(
-        self, 
-        since_ts: Optional[datetime], 
-        detail_codes: Optional[List[str]], 
-        dry_run: bool
+        self,
+        since_ts: Optional[datetime],
+        detail_codes: Optional[List[str]],
+        dry_run: bool,
     ) -> None:
         """Refresh detail snapshots"""
         self.stdout.write("Refreshing detail snapshots...")
@@ -228,20 +232,15 @@ class Command(BaseCommand):
             self.stdout.write("DRY RUN - Would refresh detail snapshots")
             return
 
-        # Here you would implement the actual snapshot refresh logic
-        # This could involve:
-        # 1. Updating materialized views
-        # 2. Refreshing cache
-        # 3. Updating summary tables
-        # 4. Rebuilding indexes
-
-        # For now, we'll just log the details that would be refreshed
-        for detail in query[:10]:  # Limit for demo
+        # For now, log sample of refreshed details
+        for detail in query[:10]:
             logger.info(
                 f"Refreshing detail: {detail.entity_uuid} "
                 f"({detail.detail_code})"
             )
 
         self.stdout.write(
-            self.style.SUCCESS(f"Detail snapshots refreshed: {detail_count} details")
+            self.style.SUCCESS(
+                f"Detail snapshots refreshed: {detail_count} details"
+            )
         )

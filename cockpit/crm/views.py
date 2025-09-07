@@ -1,3 +1,3 @@
-from django.shortcuts import render
+"""Project-level views placeholder (intentionally empty)."""
 
 # Create your views here.

@@ -66,37 +66,37 @@ class EntityDetail(SCD2Mixin):
             # only one value kind according to value_kind
             CheckConstraint(
                 name="edetail_kind_text_chk",
-                check=(
-                        Q(value_kind="TEXT", value_text__isnull=False) |
-                        ~Q(value_kind="TEXT")
+                condition=(
+                    Q(value_kind="TEXT", value_text__isnull=False) |
+                    ~Q(value_kind="TEXT")
                 ),
             ),
             CheckConstraint(
                 name="edetail_kind_num_chk",
-                check=(
-                        Q(value_kind="NUM", value_num__isnull=False) |
-                        ~Q(value_kind="NUM")
+                condition=(
+                    Q(value_kind="NUM", value_num__isnull=False) |
+                    ~Q(value_kind="NUM")
                 ),
             ),
             CheckConstraint(
                 name="edetail_kind_ts_chk",
-                check=(
-                        Q(value_kind="TS", value_ts__isnull=False) |
-                        ~Q(value_kind="TS")
+                condition=(
+                    Q(value_kind="TS", value_ts__isnull=False) |
+                    ~Q(value_kind="TS")
                 ),
             ),
             CheckConstraint(
                 name="edetail_kind_bool_chk",
-                check=(
-                        Q(value_kind="BOOL", value_bool__isnull=False) |
-                        ~Q(value_kind="BOOL")
+                condition=(
+                    Q(value_kind="BOOL", value_bool__isnull=False) |
+                    ~Q(value_kind="BOOL")
                 ),
             ),
             CheckConstraint(
                 name="edetail_kind_json_chk",
-                check=(
-                        Q(value_kind="JSON", value_json__isnull=False) |
-                        ~Q(value_kind="JSON")
+                condition=(
+                    Q(value_kind="JSON", value_json__isnull=False) |
+                    ~Q(value_kind="JSON")
                 ),
             ),
         ]

@@ -28,7 +28,6 @@ pytest-django>=4.7
 # pyarrow>=16.0       # if you plan to use parquet/large batch through Parquet
 # pandas>=2.2         # if convenient to read CSV/Parquet through pandas
 
-# --- (Optional) Code style dev utilities ---
-# black>=24.0
-# isort>=5.13
-# ruff>=0.5
+# --- Linting / Security ---
+flake8>=7.1,<8.0
+bandit>=1.7,<2.0

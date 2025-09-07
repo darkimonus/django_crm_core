@@ -1,0 +1,11 @@
+exclude_dirs:
+  - tests
+  - migrations
+  - __pycache__
+  - .venv
+skips:
+  - B101  # assert_used (acceptable in tests; excluded anyway)
+  - B404  # import_subprocess (not used; quiet if present in tooling)
+  - B603  # subprocess_without_shell_equals_true (not used; pre-empt noisy)
+severity: "LOW"
+confidence: "HIGH"
